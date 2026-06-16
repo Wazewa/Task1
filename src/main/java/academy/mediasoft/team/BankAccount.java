@@ -15,25 +15,56 @@ public class BankAccount {
         isBlocked = false;
     }
     public boolean deposit(int amount) {
-        if(amount > 0) {
+        if(isValidAmount(amount)) {
             balance += amount;
             return true;
         }
         return false;
     }
     public boolean withdraw(int amount) {
-        if(balance >= amount && amount > 0) {
+        if(isValidAmount(amount) && isBalanceHasEnoughFunds(amount)) {
             balance -= amount;
             return true;
         }
         return false;
     }
     public boolean transfer(BankAccount otherAccount, int amount){
-        if(amount > 0 && otherAccount != null && balance >= amount) {
-             withdraw(amount);
-             otherAccount.deposit(amount);
-             return true;
+        if(canMakeTransfer(otherAccount, amount)) {
+            if(otherAccount.deposit(amount)) {
+                withdraw(amount);
+                return true;
+            }
         }
         return false;
+    }
+    private boolean isValidAmount(int amount) {
+        return amount > 0;
+    }
+    private boolean isAccountExists(BankAccount otherAccount) {
+        return otherAccount != null;
+    }
+    private boolean isBalanceHasEnoughFunds(int amount) {
+        return balance >= amount;
+    }
+    private boolean canMakeTransfer(BankAccount otherAccount, int amount) {
+        return isValidAmount(amount) && isAccountExists(otherAccount) && isBalanceHasEnoughFunds(amount);
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ИНФОРМАЦИЯ О ВЛАДЕЛЬЦЕ СЧЕТА\n\tИмя владельца: ");
+        sb.append(nameOwner);
+        sb.append("\n\t");
+        sb.append("Текущий баланс: ");
+        sb.append(balance);
+        sb.append("\n\t");
+        sb.append("Дата создания счета: ");
+        sb.append(createdDate);
+        sb.append("\n\t");
+        sb.append("Счет заблокирован? ");
+        sb.append(isBlocked);
+        sb.append("\n");
+
+        return sb.toString();
     }
 }
